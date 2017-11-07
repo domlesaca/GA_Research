@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib.request
 from selenium import webdriver
+import datetime
 
 # Input the url for the specific page you want to scrape
 url = "https://www.tripadvisor.com/Hotel_Review-g45963-d91703-Reviews-or5-Bellagio_Las_Vegas-Las_Vegas_Nevada.html"
@@ -26,19 +27,20 @@ def urlScrape():
     file = urllib.request.urlopen(url)
     soup = BeautifulSoup(file, "html.parser")
     # open file
-    rev = open("reviews.txt", "a")
+    now = datetime.datetime.now()
+    fileName = hotelName+"_Reviews_"+str(now.date())+".txt"
+    rev = open(fileName, "a")
     thnk = open("thanks.txt", "a")
 
     # find reviews in file
-    reveiws = soup.find_all("div", class_="entry")
-    for reveiw in reveiws:
-        x = reveiw.text
+    reviews = soup.find_all("div", class_="review-container")
+    for review in reviews:
+        x = review.text
         # parse thank yous
         if x[0:4] == "Dear":
             thnk.write(x+"\n")
         else:
             rev.write(x+"\n")
-        print(x)
 
     #print(soup.prettify())
 
