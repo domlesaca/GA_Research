@@ -35,6 +35,7 @@ def urlScrape():
     # find reviews in file
     reviews = soup.find_all("div", class_="review-container")
     for review in reviews:
+        #rating = review.find_all
         x = review.text
         # parse thank yous
         if x[0:4] == "Dear":
