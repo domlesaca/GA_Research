@@ -29,21 +29,62 @@ def urlScrape():
     # open file
     now = datetime.datetime.now()
     fileName = hotelName+"_Reviews_"+str(now.date())+".txt"
+    print(fileName)
     rev = open(fileName, "a")
+    # Clear the file in case it already exists
+    deleteContent(rev)
     thnk = open("thanks.txt", "a")
+    # clear the thanks file to avoid duplicates
+    deleteContent(thnk)
 
-    # find reviews in file
+
+    # find reviews on webpage
     reviews = soup.find_all("div", class_="review-container")
     for review in reviews:
-        #rating = review.find_all
-        x = review.text
-        # parse thank yous
-        if x[0:4] == "Dear":
-            thnk.write(x+"\n")
-        else:
-            rev.write(x+"\n")
+        # add star rating to the file
+        stars = getStars(review)
+        rev.write(str(stars)+"\n")
+        # add date the review was made to the file
+        reviewDate = getReviewDate(review)
+        rev.write(getReviewDate(review)+"\n")
+        text = getReviewtext(review)
+        rev.write(text+"\n")
+        rev.write("\n")
 
     #print(soup.prettify())
+
+# Clears all data in a given file
+def deleteContent(pfile):
+    pfile.seek(0)
+    pfile.truncate()
+
+# Function to get the number of stars rated by a review
+def getStars(review):
+    if len(review.find_all("span", class_="bubble_50")) > 0:
+        return 5
+    elif len(review.find_all("span", class_="bubble_40")) > 0:
+        return 4
+    elif len(review.find_all("span", class_="bubble_30")) > 0:
+        return 3
+    elif len(review.find_all("span", class_="bubble_20")) > 0:
+        return 2
+    elif len(review.find_all("span", class_="bubble_10")) > 0:
+        return 1
+    else:
+        return 0
+
+# Function to get the date teh review was posted
+def getReviewDate(review):
+    # search for the span with the class ratingDate
+    date = review.find("span", class_="ratingDate")
+    # get the title of the span, this is how the date is stored
+    date = date["title"]
+    return date
+
+# Function to get the text of a review
+def getReviewtext(review):
+    text = review.find("div", class_="entry")
+    return text.text
 
 # def screenshot():
 #     DRIVER = webdriver.Chrome('C:\Program Files\Python36\selenium\webdriver\chromedriver')
