@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import urllib.request
 from selenium import webdriver
 import datetime
+import time
 
 # Input the url for the specific page you want to scrape
 url = "https://www.tripadvisor.com/Hotel_Review-g45963-d91703-Reviews-or5-Bellagio_Las_Vegas-Las_Vegas_Nevada.html"
@@ -21,10 +22,14 @@ def main():
         searchHotel()
 
 def searchHotel():
+    print("THis function is still a work in progress")
     return
 
 def urlScrape():
-    file = urllib.request.urlopen(url)
+    # Open all readmore tabs on the page
+    readMore(url)
+    #file = urllib.request.urlopen('page_source.html')
+    file  = open("page_source.html", 'r').read()
     soup = BeautifulSoup(file, "html.parser")
     # open file
     now = datetime.datetime.now()
@@ -52,6 +57,17 @@ def urlScrape():
         rev.write("\n")
 
     #print(soup.prettify())
+
+def readMore(url):
+    driver = webdriver.Chrome("selenium/webdriver/chromedriver.exe")
+    driver.get(url)
+    for elem in driver.find_elements_by_link_text('More'):
+        elem.click()
+        time.sleep(.5)
+
+    with open('page_source.html', 'w', errors='ignore') as f:
+        f.write(driver.page_source)
+    driver.close()
 
 # Clears all data in a given file
 def deleteContent(pfile):
