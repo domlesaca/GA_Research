@@ -51,19 +51,31 @@ def urlScrape():
         rev.write(str(stars)+"\n")
         # add date the review was made to the file
         reviewDate = getReviewDate(review)
-        rev.write(getReviewDate(review)+"\n")
+        rev.write(reviewDate+"\n")
         text = getReviewtext(review)
         rev.write(text+"\n")
         rev.write("\n")
-
+    rev.close()
     #print(soup.prettify())
 
 def readMore(url):
+    # open chrome
     driver = webdriver.Chrome("selenium/webdriver/chromedriver.exe")
+    # go to the selected URL
     driver.get(url)
-    for elem in driver.find_elements_by_link_text('More'):
-        elem.click()
-        time.sleep(.5)
+    # Searches for the spans that allow us to read the full reviews
+    for elem in driver.find_elements_by_class_name('taLnk') and driver.find_elements_by_class_name("ulBlueLinks"):
+        try:
+            # click on the read more links for the comments
+            elem.click()
+            # give the page a chance to catch up
+            time.sleep(.5)
+        except:
+            # No point to this code, It just avoids exceptions just in case
+            x = 1
+
+    # screenshot webassign
+    screenshot = driver.save_screenshot("screenshot.png")
 
     with open('page_source.html', 'w', errors='ignore') as f:
         f.write(driver.page_source)
