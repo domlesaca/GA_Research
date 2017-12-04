@@ -18,14 +18,8 @@ def main():
     # decide whether to scrape 1 url or do a search
     if scrapeType == 1:
         urlScrape()
-    else:
-        searchHotel()
 
-def searchHotel():
-    print("THis function is still a work in progress")
-    return
-
-def urlScrape():
+def urlScrape(url, hotelName):
     # Open all readmore tabs on the page
     readMore(url)
     #file = urllib.request.urlopen('page_source.html')
@@ -33,11 +27,10 @@ def urlScrape():
     soup = BeautifulSoup(file, "html.parser")
     # open file
     now = datetime.datetime.now()
-    fileName = hotelName+"_Reviews_"+str(now.date())+".txt"
+    fileName = "reviews/"+hotelName+"_Reviews_"+str(now.date())+".txt"
     print(fileName)
     rev = open(fileName, "a")
     # Clear the file in case it already exists
-    deleteContent(rev)
     thnk = open("thanks.txt", "a")
     # clear the thanks file to avoid duplicates
     deleteContent(thnk)
@@ -64,7 +57,10 @@ def readMore(url):
     # go to the selected URL
     driver.get(url)
     # Searches for the spans that allow us to read the full reviews
-    for elem in driver.find_elements_by_class_name('taLnk') and driver.find_elements_by_class_name("ulBlueLinks"):
+    taLinks = driver.find_elements_by_class_name('taLnk')
+    blueLinks = driver.find_elements_by_class_name("ulBlueLinks")
+    intersect = set(taLinks) & set(blueLinks)
+    for elem in intersect:
         try:
             # click on the read more links for the comments
             elem.click()
@@ -75,7 +71,6 @@ def readMore(url):
             x = 1
 
     # screenshot webassign
-    screenshot = driver.save_screenshot("screenshot.png")
 
     with open('page_source.html', 'w', errors='ignore') as f:
         f.write(driver.page_source)
@@ -113,13 +108,6 @@ def getReviewDate(review):
 def getReviewtext(review):
     text = review.find("div", class_="entry")
     return text.text
-
-# def screenshot():
-#     DRIVER = webdriver.Chrome('C:\Program Files\Python36\selenium\webdriver\chromedriver')
-#     driver = webdriver.Chrome(DRIVER)
-#     driver.get(url)
-#     screenshot = driver.save_screenshot('my_screenshot.png')
-#     driver.quit()
 
 if __name__ == '__main__':
     main()
