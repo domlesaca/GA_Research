@@ -37,7 +37,8 @@ def authenticate(consumer_key, consumer_secret, access_token, access_token_secre
     api = tweepy.API(auth)
     return api
 
-
+def getAccount(tweet):
+    return
 
 # Function searches for terms on twitter
 def searchFor(api, query="#green"):
@@ -56,12 +57,13 @@ def searchFor(api, query="#green"):
             # print text of the tweet
             print(result.full_text)
             # print date and time of the post
-            print(result.created_at)
-            file.write(result.full_text+"\n")
+            print('date: ', result.created_at)
+            print('followers: ', result.user.followers_count)
+            print('statuses: ', result.user.statuses_count)
+            file.write(result.full_text+"; "+str(result.created_at)+"; "+str(result.user.followers_count)+"\n")
     file.close()
 
-if __name__ == '__main__':
-    main()
+
 
 # Following code is not necessary to run this test, feel free to play around with it if you want
 # get followers of a user
@@ -84,3 +86,6 @@ def followers(api, name="domlesaca"):
             print(user.id_str)
             print(user.screen_name)
             print(user.followers_count)
+
+if __name__ == '__main__':
+    main()
