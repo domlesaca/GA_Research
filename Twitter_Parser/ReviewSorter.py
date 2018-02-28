@@ -32,7 +32,7 @@ def scrapeSite(url, hotelName, keyWords, pages):
         searchWord(keyWord, fileName, hotelName)
 
 if __name__ == '__main__':
-    pages = 2
+    pages = 20
     terms = []
     # Get terms from file
     termFile = open("terms.txt", 'r')
@@ -57,9 +57,12 @@ if __name__ == '__main__':
             searchTerms[t] = 0
         hotelTermMatches[hotel] = searchTerms
 
+    pacuare = [("https://www.tripadvisor.com/Hotel_Review-g9771272-d669920-Reviews-or", 0, "-Pacuare_Lodge-Pacuare_River_Province_of_Limon.html")]
     # run for each term
-    for i in range(0, len(urls)):
-        scrapeSite(urls[i], hotelNames[i], terms, pages)
+    for i in range(0, len(pacuare)):
+        print(pacuare[i][0]+'1'+pacuare[i][2])
+        pages = ReviewScrapper.getPages(pacuare[i][0]+'1'+pacuare[i][2])
+        scrapeSite(pacuare[i], hotelNames[4], terms, pages)
 
     with open("stats.csv", 'w') as csvFile:
         ReviewScrapper.deleteContent(csvFile)
@@ -76,4 +79,5 @@ if __name__ == '__main__':
 
     print(termCounts)
     print(hotelMatches)
+
 

@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import urllib.request
+import requests
 from selenium import webdriver
 import datetime
 import time
@@ -15,9 +16,21 @@ scrapeType = 1
 
 
 def main():
-    # decide whether to scrape 1 url or do a search
-    if scrapeType == 1:
-        urlScrape()
+    print('hi')
+
+def getPages(url):
+    page = requests.get(url)
+    time.sleep(1)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    print(soup)
+    tags = soup.find('div', attrs={'class': 'pagination-details'})
+    print(tags)
+    text = tags.get_text()
+    s, dash, e, of, total, rev = text.split(' ')
+    total = int(total.replace(',', ''))
+    total = int((total - total%5)/5)
+    print(total)
+    return total
 
 def urlScrape(url, hotelName):
     # Open all readmore tabs on the page
